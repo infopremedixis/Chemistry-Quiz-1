@@ -1,0 +1,1409 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pre-Medix 2025</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --success: #4cc9f0;
+            --warning: #f72585;
+            --info: #7209b7;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --option-bg: #ffffff;
+            --option-hover: #f1f3ff;
+            --option-selected: #4361ee;
+            --option-correct: #4ade80;
+            --option-incorrect: #f87171;
+            --answered: #4cc9f0;
+            --current: #f72585;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: var(--background);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 7px;
+            font-size: 10px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .header {
+            background: var(--primary);
+            color: white;
+            padding: 8px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+
+        .header p {
+            font-size: 8px;
+            opacity: 0.9;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--secondary), var(--primary), var(--secondary));
+        }
+
+        .content {
+            padding: 10px;
+        }
+
+        .social-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            gap: 4px;
+        }
+
+        .social-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            padding: 4px;
+            border-radius: 4px;
+            background: var(--light);
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+            font-size: 8px;
+        }
+
+        .social-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .social-btn.blog {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e53);
+            color: white;
+        }
+
+        .social-btn.whatsapp {
+            background: linear-gradient(45deg, #25d366, #128c7e);
+            color: white;
+        }
+
+        .social-btn.contact {
+            background: linear-gradient(45deg, #4361ee, #3a0ca3);
+            color: white;
+        }
+
+        .login-form, .student-form, .quiz-container, .result-container {
+            display: none;
+        }
+
+        .active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 8px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 3px;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 9px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 4px 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 9px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 1px rgba(67, 97, 238, 0.2);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 4px 8px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+
+        .btn-success {
+            background: var(--success);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+        }
+
+        .btn-info {
+            background: var(--info);
+        }
+
+        .timer-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            background: var(--light);
+            padding: 4px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 9px;
+        }
+
+        .progress-container {
+            height: 4px;
+            background: #e9ecef;
+            border-radius: 2px;
+            margin-bottom: 8px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        .question-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-bottom: 8px;
+            justify-content: center;
+        }
+
+        .question-btn {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            background: var(--light);
+            border: 1px solid #ddd;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 9px;
+        }
+
+        .question-btn:hover {
+            background: var(--option-hover);
+            border-color: var(--primary);
+        }
+
+        .question-btn.current {
+            background: var(--current);
+            color: white;
+            border-color: var(--current);
+        }
+
+        .question-btn.answered {
+            background: var(--answered);
+            color: white;
+            border-color: var(--answered);
+        }
+
+        .question {
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--dark);
+            line-height: 1.4;
+        }
+
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 4px;
+            margin-bottom: 10px;
+        }
+
+        .option {
+            padding: 5px;
+            background: var(--option-bg);
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            font-size: 9px;
+            line-height: 1.4;
+        }
+
+        .option:hover {
+            background: var(--option-hover);
+            border-color: var(--primary);
+        }
+
+        .option.selected {
+            background: var(--option-selected);
+            color: white;
+            border-color: var(--option-selected);
+        }
+
+        .option.correct {
+            background: var(--option-correct);
+            color: white;
+            border-color: var(--option-correct);
+        }
+
+        .option.incorrect {
+            background: var(--option-incorrect);
+            color: white;
+            border-color: var(--option-incorrect);
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 4px;
+            margin-top: 10px;
+        }
+
+        .navigation-buttons button {
+            flex: 1;
+        }
+
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 8px;
+            font-size: 9px;
+        }
+
+        .result-table th, .result-table td {
+            padding: 5px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .result-table th {
+            background: var(--light);
+            font-weight: 600;
+        }
+
+        .result-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .student-info {
+            background: var(--light);
+            padding: 6px;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            font-size: 9px;
+        }
+
+        .student-info h3 {
+            margin-bottom: 4px;
+            color: var(--primary);
+            font-size: 11px;
+        }
+
+        .reasoning-container {
+            margin-top: 10px;
+        }
+
+        .reasoning-item {
+            background: var(--light);
+            padding: 6px;
+            border-radius: 4px;
+            margin-bottom: 6px;
+            font-size: 9px;
+        }
+
+        .reasoning-item h4 {
+            color: var(--primary);
+            margin-bottom: 4px;
+            font-size: 10px;
+        }
+
+        .reasoning-item p {
+            margin-bottom: 3px;
+            line-height: 1.4;
+        }
+
+        .icon {
+            margin-right: 3px;
+            font-size: 10px;
+        }
+
+        .whatsapp-fixed {
+            position: fixed;
+            bottom: 8px;
+            right: 8px;
+            background: linear-gradient(45deg, #25d366, #128c7e);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            animation: pulse 2s infinite;
+            text-decoration: none;
+        }
+
+        .error {
+            color: #e63946;
+            font-size: 8px;
+            margin-top: 2px;
+            display: none;
+        }
+
+        .reasoning-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            max-width: 400px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+        }
+
+        .modal-header h3 {
+            color: var(--primary);
+            margin: 0;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            color: var(--dark);
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .social-buttons {
+                flex-direction: column;
+            }
+
+            .navigation-buttons {
+                flex-direction: column;
+            }
+
+            body {
+                font-size: 9px;
+                padding: 5px;
+            }
+
+            .content {
+                padding: 8px;
+            }
+
+            .question-nav {
+                gap: 3px;
+            }
+
+            .question-btn {
+                width: 18px;
+                height: 18px;
+                font-size: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Pre-Medix 2025</h1>
+            <p>Test No: Pre-Chem-01-20</p>
+        </div>
+
+        <div class="content">
+            <div class="social-buttons">
+                <a href="https://pre-medix.blogspot.com/?m=1" class="social-btn blog" target="_blank">
+                    <i class="fas fa-blog icon"></i> Blogger Website
+                </a>
+                <a href="https://whatsapp.com/channel/0029VbBGhht7j6g3r478FG0i" class="social-btn whatsapp" target="_blank">
+                    <i class="fab fa-whatsapp icon"></i> WhatsApp Channel
+                </a>
+                <a href="mailto:info.premedixis@gmail.com" class="social-btn contact">
+                    <i class="fas fa-envelope icon"></i> Contact Us
+                </a>
+            </div>
+
+            <div id="login-form" class="login-form active">
+                <div class="form-group">
+                    <label for="access-code">Access Code</label>
+                    <input type="password" id="access-code" class="form-control" placeholder="Enter your access code">
+                    <div id="login-error" class="error">Invalid access code. Please try again.</div>
+                </div>
+                <button id="login-btn" class="btn btn-block">Access Quiz</button>
+            </div>
+
+            <div id="student-form" class="student-form">
+                <h2 style="text-align: center; margin-bottom: 8px; font-size: 12px;">Student Information</h2>
+                <div class="form-group">
+                    <label for="student-name">Student Name</label>
+                    <input type="text" id="student-name" class="form-control" placeholder="Enter your full name">
+                    <div id="name-error" class="error">Please enter your name</div>
+                </div>
+                <div class="form-group">
+                    <label for="father-name">Father's Name</label>
+                    <input type="text" id="father-name" class="form-control" placeholder="Enter your father's name">
+                    <div id="father-error" class="error">Please enter your father's name</div>
+                </div>
+                <div class="form-group">
+                    <label for="mdcat-appearance">MDCAT Appearance</label>
+                    <select id="mdcat-appearance" class="form-control">
+                        <option value="">Select your status</option>
+                        <option value="fresh">Fresh</option>
+                        <option value="repeater">Repeater</option>
+                    </select>
+                    <div id="mdcat-error" class="error">Please select your MDCAT status</div>
+                </div>
+                <div class="form-group">
+                    <label for="fsc-marks">FSC Marks Obtained</label>
+                    <input type="number" id="fsc-marks" class="form-control" placeholder="Enter your FSC marks" min="0" max="1200">
+                    <div id="fsc-error" class="error">Please enter valid FSC marks</div>
+                </div>
+                <div class="form-group">
+                    <label for="fsc-total">FSC Total Marks</label>
+                    <select id="fsc-total" class="form-control">
+                        <option value="1100">1100</option>
+                        <option value="1200">1200</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="metric-marks">Metric Marks Obtained</label>
+                    <input type="number" id="metric-marks" class="form-control" placeholder="Enter your Metric marks" min="0" max="1200">
+                    <div id="metric-error" class="error">Please enter valid Metric marks</div>
+                </div>
+                <div class="form-group">
+                    <label for="metric-total">Metric Total Marks</label>
+                    <select id="metric-total" class="form-control">
+                        <option value="1100">1100</option>
+                        <option value="1200">1200</option>
+                    </select>
+                </div>
+                <button id="start-quiz-btn" class="btn btn-block">Start Quiz</button>
+            </div>
+
+            <div id="quiz-container" class="quiz-container">
+                <div class="timer-container">
+                    <div>Question Timer: <span id="question-timer">01:00</span></div>
+                    <div>Total Timer: <span id="total-timer">05:00</span></div>
+                </div>
+
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar" style="width: 0%;"></div>
+                </div>
+
+                <div class="question-nav" id="question-nav">
+                    </div>
+
+                <div class="question" id="question"></div>
+
+                <div class="options-container" id="options-container">
+                    </div>
+
+                <div class="navigation-buttons">
+                    <button id="back-btn" class="btn"><i class="fas fa-arrow-left icon"></i> Back</button>
+                    <button id="reasoning-btn" class="btn btn-info"><i class="fas fa-lightbulb icon"></i> Show Reasoning</button>
+                    <button id="skip-btn" class="btn btn-warning"><i class="fas fa-forward icon"></i> Skip</button>
+                    <button id="next-btn" class="btn btn-success">Next <i class="fas fa-arrow-right icon"></i></button>
+                    <button id="submit-quiz-btn" class="btn btn-info"><i class="fas fa-paper-plane icon"></i> Submit</button>
+                </div>
+            </div>
+
+            <div id="result-container" class="result-container">
+                <div class="student-info" id="student-info">
+                    </div>
+
+                <h2 style="font-size: 12px; margin-bottom: 6px;">Quiz Results</h2>
+                <table class="result-table">
+                    <tr>
+                        <th>Metric</th>
+                        <th>Value</th>
+                    </tr>
+                    <tr>
+                        <td>Total Correct</td>
+                        <td id="total-correct">0</td>
+                    </tr>
+                    <tr>
+                        <td>Total Incorrect</td>
+                        <td id="total-incorrect">0</td>
+                    </tr>
+                    <tr>
+                        <td>Total Skipped</td>
+                        <td id="total-skipped">0</td>
+                    </tr>
+                    <tr>
+                        <td>Marks Obtained</td>
+                        <td id="marks-obtained">0</td>
+                    </tr>
+                    <tr>
+                        <td>Percentage</td>
+                        <td id="percentage">0%</td>
+                    </tr>
+                </table>
+
+                <div class="navigation-buttons">
+                    <button id="retake-quiz-btn" class="btn btn-warning"><i class="fas fa-redo icon"></i> Retake Quiz</button>
+                    <button id="show-reasoning-btn" class="btn btn-info"><i class="fas fa-book-open icon"></i> Show All Reasoning</button>
+                    <a href="https://whatsapp.com/channel/0029VbBGhht7j6g3r478FG0i" class="btn btn-success" target="_blank">
+                        <i class="fab fa-whatsapp icon"></i> Follow WhatsApp Channel
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="reasoning-modal" id="reasoning-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Question Explanation</h3>
+                <button class="close-modal" id="close-modal">&times;</button>
+            </div>
+            <div id="modal-body">
+                </div>
+        </div>
+    </div>
+
+    <a href="https://whatsapp.com/channel/0029VbBGhht7j6g3r478FG0i" class="whatsapp-fixed" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <script>
+        // Quiz data
+        const quizData = [
+            {
+                question: "The IUPAC name for the compound CH₃CH₂CH(COOH)CH₃ is:",
+                options: ["2-Methylbutanoic acid", "3-Methylbutanoic acid", "Pentanoic acid", "2-Methylpropanoic acid"],
+                correct: 0,
+                reasoning: "The longest carbon chain containing the carboxyl group (-COOH) has 4 carbons (butanoic acid). The carbon of the carboxyl group is carbon #1. A methyl group is attached to carbon #2, making it 2-methylbutanoic acid."
+            },
+            {
+                question: "What is the correct IUPAC name for HOOC-CH₂-CH₂-COOH?",
+                options: ["Butanedioic acid", "Succinic acid", "1,4-Butanoic acid", "Glutaric acid"],
+                correct: 0,
+                reasoning: "This is a dicarboxylic acid. The longest chain has 4 carbons with a carboxyl group at each end. The correct IUPAC name is butanedioic acid. Succinic acid is its common name."
+            },
+            {
+                question: "The common name for pentanoic acid is:",
+                options: ["Formic acid", "Acetic acid", "Valeric acid", "Caproic acid"],
+                correct: 2,
+                reasoning: "The common names for C1-C6 straight-chain carboxylic acids are: methanoic (formic), ethanoic (acetic), propanoic (propionic), butanoic (butyric), pentanoic (valeric), hexanoic (caproic)."
+            },
+            {
+                question: "The ester derived from ethanol and propanoic acid is called:",
+                options: ["Ethyl propanoate", "Propyl ethanoate", "Ethoxy propane", "Propoxy ethanoate"],
+                correct: 0,
+                reasoning: "Esters are named with the alkyl group from the alcohol first (ethyl) and the carboxylate from the acid second (propanoate)."
+            },
+            {
+                question: "The compound (CH₃)₂C=CHCOCH₃ is a/an:",
+                options: ["Carboxylic acid", "Ester", "Acid anhydride", "Unsaturated ketone"],
+                correct: 3,
+                reasoning: "The functional group with the highest priority is the ketone (C=O), not a carboxylic acid or its derivative. The carbon-carbon double bond makes it unsaturated."
+            },
+            {
+                question: "The correct structure of acetic anhydride is:",
+                options: ["CH₃COOCOCH₃", "CH₃CONH₂", "CH₃COCl", "CH₃COOCH₃"],
+                correct: 0,
+                reasoning: "An acid anhydride is formed by the condensation of two carboxylic acid molecules. Acetic anhydride is (CH₃CO)₂O, which can be written as CH₃COOCOCH₃."
+            },
+            {
+                question: "The reactivity of carboxylic acid derivatives is primarily governed by:",
+                options: ["The size of the alkyl group", "The electronegativity of the atom attached to the acyl carbon", "The boiling point of the derivative", "The number of oxygen atoms"],
+                correct: 1,
+                reasoning: "The leaving group ability (basicity) of the group attached to the carbonyl carbon determines reactivity. A better leaving group (weaker base, often influenced by electronegativity) makes the derivative more reactive. The order is acid chloride > anhydride > ester ≈ acid > amide."
+            },
+            {
+                question: "Which carboxylic acid derivative is the most reactive towards nucleophilic acyl substitution?",
+                options: ["Amide", "Ester", "Acid chloride", "Carboxylic acid"],
+                correct: 2,
+                reasoning: "Chloride (Cl⁻) is a very weak base and an excellent leaving group, making acid chlorides the most reactive common derivative."
+            },
+            {
+                question: "In nucleophilic acyl substitution, the first step is:",
+                options: ["Loss of the leaving group", "Protonation of the carbonyl oxygen", "Nucleophilic attack on the carbonyl carbon", "Deprotonation"],
+                correct: 2,
+                reasoning: "The mechanism begins with the nucleophile attacking the electrophilic carbonyl carbon, forming a tetrahedral intermediate. The leaving group is expelled in the second step."
+            },
+            {
+                question: "Carboxylic acids have higher boiling points than alcohols of similar molecular weight because:",
+                options: ["They have more hydrogen atoms", "They form stronger dimers via two hydrogen bonds", "They are more acidic", "They have a higher carbon content"],
+                correct: 1,
+                reasoning: "Carboxylic acids form cyclic dimers through two strong hydrogen bonds (O-H···O=C), effectively doubling their molecular weight for boiling point considerations, leading to higher boiling points than alcohols which can only form single intermolecular hydrogen bonds."
+            },
+            {
+                question: "The primary reason for the acidity of carboxylic acids is:",
+                options: ["The presence of a highly electronegative oxygen atom.", "The resonance stabilization of the conjugate base.", "The inductive effect of the carbonyl group.", "Both b and c."],
+                correct: 3,
+                reasoning: "The carboxylate anion is stabilized by two equivalent resonance structures, delocalizing the negative charge over two oxygen atoms. Additionally, the electron-withdrawing inductive effect of the carbonyl group helps to stabilize the negative charge."
+            },
+            {
+                question: "Which of the following is the strongest acid?",
+                options: ["CH₃CH₂CH₂COOH", "ClCH₂CH₂CH₂COOH", "CH₃CHClCH₂COOH", "CH₃CH₂CHClCOOH"],
+                correct: 3,
+                reasoning: "The electron-withdrawing chlorine atom has a stronger inductive effect the closer it is to the carboxyl group. It is most effective at stabilizing the conjugate base when on the alpha-carbon."
+            },
+            {
+                question: "The product of the reaction between a carboxylic acid (RCOOH) and an alcohol (R'OH) with an acid catalyst is:",
+                options: ["An acid chloride", "An amide", "An ester", "An anhydride"],
+                correct: 2,
+                reasoning: "This is the Fischer esterification reaction: RCOOH + R'OH ⇌ RCOOR' + H₂O (acid-catalyzed)."
+            },
+            {
+                question: "A Grignard reagent (RMgBr) reacts with CO₂ followed by acidification to give:",
+                options: ["An alkane", "An alcohol", "A ketone", "A carboxylic acid"],
+                correct: 3,
+                reasoning: "CO₂ acts as an electrophile. The nucleophilic R- group from the Grignard reagent attacks carbon dioxide to form a carboxylate salt, which is then protonated with acid to yield a carboxylic acid (RCOOH)."
+            },
+            {
+                question: "The carbonation of a Grignard reagent is a method to prepare carboxylic acids with:",
+                options: ["One more carbon than the original alkyl halide", "The same number of carbons", "One less carbon", "Two more carbons"],
+                correct: 0,
+                reasoning: "The Grignard reagent is formed from an alkyl halide (R-X). The reaction R-MgBr + CO₂ → R-COOH incorporates the carbon from CO₂, so the product acid has one more carbon than the starting alkyl group R."
+            },
+            {
+                question: "Which alkyl halide would be used to prepare pentanoic acid via the nitrile hydrolysis route?",
+                options: ["1-Bromopentane", "1-Bromobutane", "1-Bromohexane", "Bromocyclopentane"],
+                correct: 1,
+                reasoning: "The sequence is R-Br → R-CN → R-COOH. The nitrile group (-CN) adds an extra carbon. To get a 5-carbon acid (pentanoic acid), you must start with a 4-carbon alkyl halide (1-bromobutane)."
+            },
+            {
+                question: "Hydrolysis of a nitrile (R-CN) to a carboxylic acid (R-COOH) under acidic conditions proceeds through which intermediate?",
+                options: ["An amide (RCONH₂)", "An imine", "An enol", "An ester"],
+                correct: 0,
+                reasoning: "The mechanism involves initial protonation of the nitrile nitrogen, followed by water addition to give an imidic acid tautomer, which tautomerizes to the more stable amide. The amide is then hydrolyzed further to the carboxylic acid."
+            },
+            {
+                question: "The final product of the hydrolysis of benzonitrile (C₆H₅-CN) is:",
+                options: ["Benzamide", "Benzoic acid", "Benzaldehyde", "Aniline"],
+                correct: 1,
+                reasoning: "Complete hydrolysis of any nitrile (R-CN) under acidic or basic aqueous conditions yields the corresponding carboxylic acid (R-COOH). Therefore, benzonitrile gives benzoic acid."
+            },
+            {
+                question: "Primary alcohols can be oxidized to carboxylic acids using which reagent?",
+                options: ["PCC (Pyridinium chlorochromate)", "KMnO₄ in neutral conditions", "K₂Cr₂O₇ / H₂SO₄", "LiAlH₄"],
+                correct: 2,
+                reasoning: "Strong oxidizing agents like potassium dichromate in sulfuric acid or potassium permanganate will oxidize a primary alcohol first to an aldehyde and then to a carboxylic acid. PCC is a mild oxidant that stops at the aldehyde."
+            },
+            {
+                question: "What is the intermediate in the oxidation of a primary alcohol to a carboxylic acid?",
+                options: ["A ketone", "An ester", "An aldehyde", "An epoxide"],
+                correct: 2,
+                reasoning: "The oxidation proceeds in two steps: 1° alcohol → aldehyde → carboxylic acid. The aldehyde is the isolable intermediate, though under strong aqueous conditions it is rapidly oxidized further."
+            },
+            {
+                question: "Which compound, upon oxidation with KMnO₄ / H⁺, will yield a carboxylic acid with the same number of carbon atoms?",
+                options: ["CH₃CH₂CH₂OH", "(CH₃)₂CHOH", "(CH₃)₃COH", "C₆H₅CH₂OH"],
+                correct: 0,
+                reasoning: "A primary alcohol (like 1-propanol) oxidizes to a carboxylic acid with the same number of carbons (propanoic acid). (b) and (c) are 2° and 3° alcohols which do not oxidize to carboxylic acids. (d) is benzyl alcohol, which oxidizes to benzoic acid, losing one carbon (the -CH₂OH group becomes -COOH)."
+            },
+            {
+                question: "Toluene (C₆H₅CH₃) can be oxidized to benzoic acid using:",
+                options: ["Acidic KMnO₄", "KMnO₄ in cold, dilute conditions", "PCC", "NaBH₄"],
+                correct: 0,
+                reasoning: "Alkyl side chains on aromatic rings bearing at least one benzylic hydrogen are oxidized to carboxyl groups (-COOH) by strong oxidizing agents like hot KMnO₄ or K₂Cr₂O₇/H₂SO₄."
+            },
+            {
+                question: "Oxidation of 4-Chlorotoluene with KMnO₄ / H⁺ will yield:",
+                options: ["4-Chlorobenzoic acid", "Terephthalic acid", "Benzoic acid", "4-Chlorobenzaldehyde"],
+                correct: 0,
+                reasoning: "The methyl group (-CH₃) is oxidized to a carboxyl group (-COOH). The chlorine atom attached directly to the ring is unaffected by the oxidizing conditions."
+            },
+            {
+                question: "Which compound cannot be oxidized to a carboxylic acid by hot KMnO₄?",
+                options: ["Ethylbenzene (C₆H₅CH₂CH₃)", "Isopropylbenzene (C₆H₅CH(CH₃)₂)", "tert-Butylbenzene (C₆H₅C(CH₃)₃)", "p-Xylene"],
+                correct: 2,
+                reasoning: "The oxidation requires a benzylic hydrogen. tert-Butylbenzene has no benzylic hydrogens (the carbon attached to the ring is tertiary), so it is resistant to oxidation."
+            },
+            {
+                question: "The conversion of a carboxylic acid to an acid chloride is achieved with:",
+                options: ["PCl₅ or SOCl₂", "CH₃OH / H⁺", "NH₃", "H₂O / H⁺"],
+                correct: 0,
+                reasoning: "Reagents like thionyl chloride (SOCl₂) or phosphorus pentachloride (PCl₅) are used to replace the -OH group of a carboxylic acid with a chloride (-Cl), forming the highly reactive acid chloride."
+            },
+            {
+                question: "The best reagent for converting RCOOH to RCOOCH₃ is:",
+                options: ["CH₃OH", "CH₃OH / H⁺", "CH₃Cl", "CH₃MgBr"],
+                correct: 1,
+                reasoning: "The acid-catalyzed Fischer esterification (RCOOH + CH₃OH → RCOOCH₃ + H₂O) is the direct method. CH₃OH alone is not reactive enough, and CH₃Cl is an electrophile, not a nucleophile."
+            },
+            {
+                question: "What is the product when acetic acid reacts with ammonia?",
+                options: ["Acetamide", "Methylamine", "Ammonium acetate", "Acetonitrile"],
+                correct: 2,
+                reasoning: "Carboxylic acids first react with ammonia in a simple acid-base reaction to form an ammonium salt (CH₃COO⁻ ⁺NH₄). High heat is required to dehydrate this salt to the amide (CH₃CONH₂)."
+            },
+            {
+                question: "An acid chloride reacts with a carboxylate ion to yield:",
+                options: ["An ester", "An amide", "An acid anhydride", "A ketone"],
+                correct: 2,
+                reasoning: "This is a classic synthesis of anhydrides. The nucleophilic carboxylate anion attacks the electrophilic carbonyl carbon of the acid chloride."
+            },
+            {
+                question: "The reaction between an acid chloride and an alcohol (in the presence of pyridine) produces:",
+                options: ["An acid anhydride", "An ester", "A carboxylic acid", "An amide"],
+                correct: 1,
+                reasoning: "Pyridine acts as a base to scavenge the HCl produced. The reaction RCOCl + R'OH → RCOOR' + HCl is a very efficient way to prepare esters."
+            },
+            {
+                question: "The hydrolysis of an amide in basic conditions yields:",
+                options: ["A carboxylic acid and an amine", "A carboxylate salt and an amine", "An ester and ammonia", "An acid chloride and ammonia"],
+                correct: 1,
+                reasoning: "Basic hydrolysis of an amide (RCONH₂) gives the carboxylate anion (RCOO⁻) and ammonia or an amine (NH₃ or R''NH₂). Acidification is required to get the free carboxylic acid."
+            },
+            {
+                question: "The IUPAC name for (CH₃)₂CHCH₂COOH is:",
+                options: ["3-Methylbutanoic acid", "Isopentanoic acid", "2-Methylbutanoic acid", "4-Methylpentanoic acid"],
+                correct: 0,
+                reasoning: "The longest chain including the COOH is butanoic acid (4 carbons). A methyl group is on carbon #3."
+            },
+            {
+                question: "The common name for 2-hydroxypropanoic acid is:",
+                options: ["Acetic acid", "Lactic acid", "Pyruvic acid", "Malic acid"],
+                correct: 1,
+                reasoning: "This is the standard common name for 2-hydroxypropanoic acid."
+            },
+            {
+                question: "Which derivative has a functional group with the general formula R-C≡N?",
+                options: ["Nitrile", "Imine", "Oxime", "Amidine"],
+                correct: 0,
+                reasoning: "A nitrile is characterized by the -C≡N triple bond."
+            },
+            {
+                question: "The boiling point of ethanoic acid is significantly higher than that of propanol primarily because:",
+                options: ["It has a higher molecular weight", "It forms stronger dimeric hydrogen bonds", "It is more soluble in water", "It has a larger surface area"],
+                correct: 1,
+                reasoning: "The dimeric association in carboxylic acids is a stronger intermolecular force than the single hydrogen bonding in alcohols."
+            },
+            {
+                question: "Which factor does NOT contribute to the acidity of carboxylic acids?",
+                options: ["Resonance stabilization of the conjugate base", "Inductive effect of the carbonyl oxygen", "Hydrogen bonding in the conjugate acid", "The polar nature of the O-H bond"],
+                correct: 2,
+                reasoning: "Hydrogen bonding stabilizes the neutral acid molecule (raising its pKa), not the conjugate base. Factors a, b, and d stabilize the conjugate base, increasing acidity."
+            },
+            {
+                question: "The correct order of acidity is:",
+                options: ["CH₃CH₂OH < CH₃COOH < C₆H₅OH < HCl", "CH₃COOH < CH₃CH₂OH < C₆H₅OH < HCl", "CH₃CH₂OH < C₆H₅OH < CH₃COOH < HCl", "C₆H₅OH < CH₃CH₂OH < CH₃COOH < HCl"],
+                correct: 2,
+                reasoning: "pKa values: Alcohol (~16) > Phenol (~10) > Carboxylic Acid (~5) > HCl (-7). Lower pKa means stronger acid."
+            },
+            {
+                question: "A student wants to prepare benzoic acid from bromobenzene. The best synthetic route is:",
+                options: ["Bromobenzene → Grignard reagent → CO₂ → H₃O⁺", "Bromobenzene → Nitrile → Hydrolysis", "Bromobenzene → Friedel-Crafts alkylation → Oxidation", "Both a and b"],
+                correct: 3,
+                reasoning: "Both the Grignard/CO₂ and nitrile hydrolysis routes are valid for converting aryl halides to carboxylic acids, as they involve nucleophilic substitution which is possible with aryl halides."
+            },
+            {
+                question: "Hydrolysis of a nitrile under basic conditions yields a:",
+                options: ["Carboxylic acid", "Carboxylate salt", "Primary amide", "Aldehyde"],
+                correct: 1,
+                reasoning: "The initial product is the carboxylate anion (RCOO⁻). Acidification is required to protonate it to the free acid (RCOOH)."
+            },
+            {
+                question: "Which alcohol will NOT be oxidized to a carboxylic acid by chromic acid (H₂CrO₄)?",
+                options: ["CH₃OH", "CH₃CH₂OH", "(CH₃)₂CHOH", "HOCH₂CH₂OH"],
+                correct: 2,
+                reasoning: "This is a secondary alcohol. It will be oxidized to a ketone (acetone), which is resistant to further oxidation by chromic acid."
+            },
+            {
+                question: "What is the product of the oxidation of ethanol with potassium dichromate and sulfuric acid?",
+                options: ["Ethanal", "Ethanoic acid", "Ethane", "Ethylene"],
+                correct: 1,
+                reasoning: "Strong oxidation of a primary alcohol yields the carboxylic acid."
+            },
+            {
+                question: "Oxidation of p-nitrotoluene gives:",
+                options: ["p-Nitrobenzaldehyde", "p-Nitrobenzoic acid", "p-Aminobenzoic acid", "Terephthalic acid"],
+                correct: 1,
+                reasoning: "The methyl group is oxidized to carboxylic acid. The nitro group is unaffected."
+            },
+            {
+                question: "Which reagent is used to selectively oxidize a primary alcohol to an aldehyde, stopping before the carboxylic acid?",
+                options: ["KMnO₄, heat", "K₂Cr₂O₇ / H₂SO₄", "PCC in CH₂Cl₂", "Ag₂O"],
+                correct: 2,
+                reasoning: "Pyridinium chlorochromate (PCC) in anhydrous dichloromethane is a common reagent for this selective oxidation."
+            },
+            {
+                question: "The conversion of R-COOH to R-COCl is an example of:",
+                options: ["Oxidation", "Reduction", "Nucleophilic acyl substitution", "Electrophilic aromatic substitution"],
+                correct: 2,
+                reasoning: "The -OH group (a poor leaving group) is substituted by -Cl (from SOCl₂ or PCl₅), which is a better leaving group."
+            },
+            {
+                question: "The reaction: R-COCl + 2 R'NH₂ → R-CONHR' + R'NH₃⁺Cl⁻ yields a/an:",
+                options: ["Primary amide", "Secondary amide", "Tertiary amide", "Ammonium salt"],
+                correct: 1,
+                reasoning: "The first equivalent of amine acts as a nucleophile. The second equivalent acts as a base to deprotonate the intermediate, leading to a substituted amide (R-CONHR')."
+            },
+            {
+                question: "Lactones are:",
+                options: ["Cyclic ethers", "Cyclic esters", "Cyclic amides", "Cyclic anhydrides"],
+                correct: 1,
+                reasoning: "A lactone is an intramolecular ester, formed when a hydroxyl group and a carboxyl group in the same molecule react."
+            },
+            {
+                question: "The driving force for the reaction RCOO⁻ + R'COCl → (RCO)₂O + Cl⁻ is:",
+                options: ["Formation of a strong acid (HCl)", "Formation of a stable gas (CO₂)", "Formation of the chloride ion, a good leaving group", "The high reactivity of the acid chloride"],
+                correct: 2,
+                reasoning: "Chloride (Cl⁻) is a much weaker base and better leaving group than a carboxylate ion (RCOO⁻), making this substitution reaction favorable."
+            },
+            {
+                question: "Saponification is the hydrolysis of an ester in:",
+                options: ["Acidic medium", "Basic medium", "Neutral medium", "Non-aqueous medium"],
+                correct: 1,
+                reasoning: "Saponification specifically refers to the base-promoted hydrolysis of an ester, producing a carboxylate salt and an alcohol."
+            },
+            {
+                question: "Which carboxylic acid derivative is hydrolyzed the slowest in neutral water?",
+                options: ["Acetyl chloride", "Acetic anhydride", "Ethyl acetate", "Acetamide"],
+                correct: 3,
+                reasoning: "Amides are the least reactive derivative because NH₂⁻ is a very strong base and poor leaving group. Acid chlorides and anhydrides react violently with water."
+            },
+            {
+                question: "The product of the reaction between formic acid (HCOOH) and concentrated sulfuric acid is:",
+                options: ["Formamide", "Carbon monoxide", "Methanol", "Oxalic acid"],
+                correct: 1,
+                reasoning: "Concentrated H₂SO₄ dehydrates formic acid, which is unstable, leading to carbon monoxide (HCOOH → CO + H₂O)."
+            },
+            {
+                question: "The Hell–Volhard–Zelinsky (HVZ) reaction is used for:",
+                options: ["Oxidation of aldehydes", "α-Bromination of carboxylic acids", "Decarboxylation of acids", "Reduction of acids to alcohols"],
+                correct: 1,
+                reasoning: "The HVZ reaction uses Br₂ and PBr₃ to specifically brominate the alpha-carbon of a carboxylic acid."
+            }
+        ];
+
+        // DOM Elements
+        const loginForm = document.getElementById('login-form');
+        const studentForm = document.getElementById('student-form');
+        const quizContainer = document.getElementById('quiz-container');
+        const resultContainer = document.getElementById('result-container');
+        const questionNav = document.getElementById('question-nav');
+        const reasoningModal = document.getElementById('reasoning-modal');
+        const modalBody = document.getElementById('modal-body');
+        const closeModal = document.getElementById('close-modal');
+
+        const accessCodeInput = document.getElementById('access-code');
+        const loginBtn = document.getElementById('login-btn');
+        const startQuizBtn = document.getElementById('start-quiz-btn');
+
+        const questionElement = document.getElementById('question');
+        const optionsContainer = document.getElementById('options-container');
+        const progressBar = document.getElementById('progress-bar');
+        const questionTimerElement = document.getElementById('question-timer');
+        const totalTimerElement = document.getElementById('total-timer');
+
+        const backBtn = document.getElementById('back-btn');
+        const reasoningBtn = document.getElementById('reasoning-btn');
+        const skipBtn = document.getElementById('skip-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const submitQuizBtn = document.getElementById('submit-quiz-btn');
+
+        const retakeQuizBtn = document.getElementById('retake-quiz-btn');
+        const showReasoningBtn = document.getElementById('show-reasoning-btn');
+        const studentInfoElement = document.getElementById('student-info');
+
+        // Error elements
+        const loginError = document.getElementById('login-error');
+        const nameError = document.getElementById('name-error');
+        const fatherError = document.getElementById('father-error');
+        const mdcatError = document.getElementById('mdcat-error');
+        const fscError = document.getElementById('fsc-error');
+        const metricError = document.getElementById('metric-error');
+
+        // Quiz state variables
+        let currentQuestion = 0;
+        let answers = [];
+        let questionTimeLeft = 60;
+        let totalTimeLeft = quizData.length * 60;
+        let questionTimerInterval;
+        let totalTimerInterval;
+        let studentData = {};
+
+        // Event Listeners
+        loginBtn.addEventListener('click', handleLogin);
+        startQuizBtn.addEventListener('click', startQuiz);
+        backBtn.addEventListener('click', goToPreviousQuestion);
+        reasoningBtn.addEventListener('click', showReasoning);
+        skipBtn.addEventListener('click', skipQuestion);
+        nextBtn.addEventListener('click', goToNextQuestion);
+        submitQuizBtn.addEventListener('click', submitQuiz);
+        retakeQuizBtn.addEventListener('click', retakeQuiz);
+        showReasoningBtn.addEventListener('click', showAllReasoning);
+        closeModal.addEventListener('click', () => {
+            reasoningModal.style.display = 'none';
+        });
+
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === reasoningModal) {
+                reasoningModal.style.display = 'none';
+            }
+        });
+
+        // Allow Enter key to submit forms
+        accessCodeInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                handleLogin();
+            }
+        });
+
+        // Functions
+        function handleLogin() {
+            const accessCode = accessCodeInput.value.trim();
+
+            if (accessCode === 'Pre-Medix-52728') {
+                loginError.style.display = 'none';
+                loginForm.classList.remove('active');
+                studentForm.classList.add('active');
+            } else if (accessCode === 'Dev-PreMedix-2025') {
+                loginError.style.display = 'none';
+                alert('Developer access granted!');
+                // Directly show quiz for developer
+                loginForm.classList.remove('active');
+                quizContainer.classList.add('active');
+                initializeQuiz();
+            } else {
+                loginError.style.display = 'block';
+            }
+        }
+
+        function validateStudentForm() {
+            let isValid = true;
+
+            // Reset errors
+            nameError.style.display = 'none';
+            fatherError.style.display = 'none';
+            mdcatError.style.display = 'none';
+            fscError.style.display = 'none';
+            metricError.style.display = 'none';
+
+            // Collect student data
+            studentData = {
+                name: document.getElementById('student-name').value,
+                fatherName: document.getElementById('father-name').value,
+                mdcatAppearance: document.getElementById('mdcat-appearance').value,
+                fscMarks: document.getElementById('fsc-marks').value,
+                fscTotal: document.getElementById('fsc-total').value,
+                metricMarks: document.getElementById('metric-marks').value,
+                metricTotal: document.getElementById('metric-total').value
+            };
+
+            // Validate name
+            if (!studentData.name || studentData.name.trim() === '') {
+                nameError.style.display = 'block';
+                isValid = false;
+            }
+
+            // Validate father's name
+            if (!studentData.fatherName || studentData.fatherName.trim() === '') {
+                fatherError.style.display = 'block';
+                isValid = false;
+            }
+
+            // Validate MDCAT appearance
+            if (!studentData.mdcatAppearance) {
+                mdcatError.style.display = 'block';
+                isValid = false;
+            }
+
+            // Validate FSC marks
+            const fscMarks = parseInt(studentData.fscMarks);
+            const fscTotal = parseInt(studentData.fscTotal);
+            if (isNaN(fscMarks) || fscMarks < 0 || fscMarks > fscTotal) {
+                fscError.style.display = 'block';
+                isValid = false;
+            }
+
+            // Validate Metric marks
+            const metricMarks = parseInt(studentData.metricMarks);
+            const metricTotal = parseInt(studentData.metricTotal);
+            if (isNaN(metricMarks) || metricMarks < 0 || metricMarks > metricTotal) {
+                metricError.style.display = 'block';
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        function startQuiz() {
+            // Validate form
+            if (!validateStudentForm()) {
+                return;
+            }
+
+            studentForm.classList.remove('active');
+            quizContainer.classList.add('active');
+
+            // Initialize quiz
+            initializeQuiz();
+        }
+
+        function initializeQuiz() {
+            // Create question navigation buttons
+            questionNav.innerHTML = '';
+            quizData.forEach((_, index) => {
+                const button = document.createElement('button');
+                button.className = 'question-btn';
+                button.textContent = index + 1;
+                button.addEventListener('click', () => {
+                    currentQuestion = index;
+                    loadQuestion();
+                });
+                questionNav.appendChild(button);
+            });
+
+            // Initialize answers array
+            answers = new Array(quizData.length).fill(undefined);
+
+            // Load first question
+            loadQuestion();
+            startTimers();
+        }
+
+        function loadQuestion() {
+            const question = quizData[currentQuestion];
+            questionElement.innerHTML = `<b>${currentQuestion + 1}. ${question.question}</b>`;
+
+            // Update progress bar
+            progressBar.style.width = `${((currentQuestion + 1) / quizData.length) * 100}%`;
+
+            // Clear previous options
+            optionsContainer.innerHTML = '';
+
+            // Add new options
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                if (answers[currentQuestion] !== undefined && answers[currentQuestion] === index) {
+                    optionElement.classList.add('selected');
+                }
+                optionElement.textContent = option;
+                optionElement.addEventListener('click', () => selectOption(index));
+                optionsContainer.appendChild(optionElement);
+            });
+
+            // Update navigation buttons
+            backBtn.disabled = currentQuestion === 0;
+            nextBtn.disabled = false;
+            submitQuizBtn.style.display = currentQuestion === quizData.length - 1 ? 'block' : 'none';
+            nextBtn.style.display = currentQuestion === quizData.length - 1 ? 'none' : 'block';
+
+            // Update question navigation
+            updateQuestionNavigation();
+
+            // Reset question timer
+            questionTimeLeft = 60;
+            updateQuestionTimer();
+        }
+
+        function updateQuestionNavigation() {
+            const navButtons = questionNav.querySelectorAll('.question-btn');
+            navButtons.forEach((button, index) => {
+                button.classList.remove('current', 'answered');
+
+                if (index === currentQuestion) {
+                    button.classList.add('current');
+                }
+
+                if (answers[index] !== undefined) {
+                    button.classList.add('answered');
+                }
+            });
+        }
+
+        function selectOption(index) {
+            answers[currentQuestion] = index;
+            updateQuestionNavigation();
+            loadQuestion();
+        }
+
+        function showReasoning() {
+            const question = quizData[currentQuestion];
+            modalBody.innerHTML = `
+                <h4>${currentQuestion + 1}. ${question.question}</h4>
+                <p><strong>Correct Answer:</strong> ${question.options[question.correct]}</p>
+                <p><strong>Explanation:</strong> ${question.reasoning}</p>
+            `;
+            reasoningModal.style.display = 'flex';
+        }
+
+        function goToPreviousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                loadQuestion();
+            }
+        }
+
+        function skipQuestion() {
+            answers[currentQuestion] = undefined;
+            updateQuestionNavigation();
+            if (currentQuestion < quizData.length - 1) {
+                currentQuestion++;
+                loadQuestion();
+            } else {
+                submitQuiz();
+            }
+        }
+
+        function goToNextQuestion() {
+            if (currentQuestion < quizData.length - 1) {
+                currentQuestion++;
+                loadQuestion();
+            } else {
+                submitQuiz();
+            }
+        }
+
+        function startTimers() {
+            // Clear any existing timers
+            clearInterval(questionTimerInterval);
+            clearInterval(totalTimerInterval);
+
+            // Question timer
+            questionTimerInterval = setInterval(() => {
+                questionTimeLeft--;
+                updateQuestionTimer();
+
+                if (questionTimeLeft <= 0) {
+                    clearInterval(questionTimerInterval);
+                    goToNextQuestion();
+                }
+            }, 1000);
+
+            // Total timer
+            totalTimerInterval = setInterval(() => {
+                totalTimeLeft--;
+                updateTotalTimer();
+
+                if (totalTimeLeft <= 0) {
+                    clearInterval(totalTimerInterval);
+                    submitQuiz();
+                }
+            }, 1000);
+        }
+
+        function updateQuestionTimer() {
+            const minutes = Math.floor(questionTimeLeft / 60);
+            const seconds = questionTimeLeft % 60;
+            questionTimerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+            // Change color when time is running out
+            if (questionTimeLeft <= 10) {
+                questionTimerElement.style.color = '#e63946';
+            } else {
+                questionTimerElement.style.color = 'inherit';
+            }
+        }
+
+        function updateTotalTimer() {
+            const minutes = Math.floor(totalTimeLeft / 60);
+            const seconds = totalTimeLeft % 60;
+            totalTimerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+            // Change color when time is running out
+            if (totalTimeLeft <= 60) {
+                totalTimerElement.style.color = '#e63946';
+            } else {
+                totalTimerElement.style.color = 'inherit';
+            }
+        }
+
+        function submitQuiz() {
+            clearInterval(questionTimerInterval);
+            clearInterval(totalTimerInterval);
+
+            quizContainer.classList.remove('active');
+            resultContainer.classList.add('active');
+
+            // Calculate results
+            let correct = 0;
+            let incorrect = 0;
+            let skipped = 0;
+
+            answers.forEach((answer, index) => {
+                if (answer === undefined) {
+                    skipped++;
+                } else if (answer === quizData[index].correct) {
+                    correct++;
+                } else {
+                    incorrect++;
+                }
+            });
+
+            const totalMarks = quizData.length;
+            const marksObtained = correct;
+            const percentage = ((correct / totalMarks) * 100).toFixed(2);
+
+            // Update result table
+            document.getElementById('total-correct').textContent = correct;
+            document.getElementById('total-incorrect').textContent = incorrect;
+            document.getElementById('total-skipped').textContent = skipped;
+            document.getElementById('marks-obtained').textContent = `${marksObtained}/${totalMarks}`;
+            document.getElementById('percentage').textContent = `${percentage}%`;
+
+            // Display student info
+            studentInfoElement.innerHTML = `
+                <h3>Student Information</h3>
+                <p><strong>Name:</strong> ${studentData.name}</p>
+                <p><strong>Father's Name:</strong> ${studentData.fatherName}</p>
+                <p><strong>MDCAT Appearance:</strong> ${studentData.mdcatAppearance.charAt(0).toUpperCase() + studentData.mdcatAppearance.slice(1)}</p>
+                <p><strong>FSC Marks:</strong> ${studentData.fscMarks}/${studentData.fscTotal}</p>
+                <p><strong>Metric Marks:</strong> ${studentData.metricMarks}/${studentData.metricTotal}</p>
+            `;
+        }
+
+        function showAllReasoning() {
+            const reasoningContainer = document.createElement('div');
+            reasoningContainer.className = 'reasoning-container';
+            reasoningContainer.style.marginTop = '0';
+
+            quizData.forEach((question, index) => {
+                const reasoningItem = document.createElement('div');
+                reasoningItem.className = 'reasoning-item';
+
+                // Determine if the answer was correct, incorrect, or skipped
+                let answerStatus = '';
+                if (answers[index] === undefined) {
+                    answerStatus = '<span style="color: #6c757d;">(Skipped)</span>';
+                } else if (answers[index] === question.correct) {
+                    answerStatus = '<span style="color: #4ade80;">(Correct)</span>';
+                } else {
+                    answerStatus = '<span style="color: #f87171;">(Incorrect)</span>';
+                }
+
+                reasoningItem.innerHTML = `
+                    <h4>Question ${index + 1}: ${question.question} ${answerStatus}</h4>
+                    <p><strong>Your Answer:</strong> ${answers[index] !== undefined ? question.options[answers[index]] : 'Skipped'}</p>
+                    <p><strong>Correct Answer:</strong> ${question.options[question.correct]}</p>
+                    <p><strong>Reasoning:</strong> ${question.reasoning}</p>
+                `;
+
+                reasoningContainer.appendChild(reasoningItem);
+            });
+
+            modalBody.innerHTML = '';
+            modalBody.appendChild(reasoningContainer);
+            reasoningModal.style.display = 'flex';
+        }
+
+        function retakeQuiz() {
+            if (confirm('Are you sure you want to retake the quiz? Your current progress will be lost.')) {
+                // Reset quiz state
+                currentQuestion = 0;
+                answers = [];
+                questionTimeLeft = 60;
+                totalTimeLeft = quizData.length * 60;
+
+                // Show quiz container
+                resultContainer.classList.remove('active');
+                quizContainer.classList.add('active');
+
+                // Re-initialize quiz
+                initializeQuiz();
+            }
+        }
+    </script>
+</body>
+</html>
